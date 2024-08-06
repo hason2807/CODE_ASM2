@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management System</title>
+    <link href="~/css/Home.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            background-color: #f4f4f4;
+        }
+
+        .menu-container {
+            width: 250px;
+            background-color: #34495e;
+            height: 100vh;
+            color: white;
+            padding-top: 20px;
+            transition: width 0.3s;
+        }
+
+        .menu-container.collapsed {
+            width: 60px;
+        }
+
+        .menu-toggle {
+            font-size: 24px;
+            margin-left: 20px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .menu-container.collapsed .menu-toggle {
+            transform: rotate(90deg);
+        }
+
+        .menu-items {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .menu-items li {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-items li:hover {
+            background-color: #2c3e50;
+        }
+
+        .menu-items li i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .menu-container.collapsed .menu-items li span {
+            display: none;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+
+        .content>div {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .action-buttons button {
+            margin-right: 5px;
+        }
+
+        h1,
+        h2 {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu-container" id="menuContainer">
+        <div class="menu-toggle" id="menuToggle">☰</div>
+        <ul class="menu-items">
+            <li data-target="home"><i>🏠</i><span>Home</span></li>
+            <li data-target="classes"><i>📅</i><span>Classes</span></li>
+            <li data-target="students"><i>👥</i><span>Students</span></li>
+            <li data-target="teachers"><i>👨‍🏫</i><span>Teachers</span></li>
+            <li data-target="subjects"><i>📊</i><span>Subjects</span></li>
+            <li data-target="grades"><i>📝</i><span>Grades</span></li>
+            <li data-target="attendance"><i>🏆</i><span>Attendance</span></li>
+        </ul>
+    </div>
+
+    <div class="content" id="content">
+        <div id="classes">
+            <h1>Quản lý Lớp học</h1>
+            <form id="classForm">
+                <div class="form-group">
+                    <label for="className">Tên lớp:</label>
+                    <input type="text" id="className" name="className" required>
+                </div>
+                <div class="form-group">
+                    <label for="classTeacher">Giáo viên:</label>
+                    <input type="text" id="classTeacher" name="classTeacher" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentCount">Sĩ số lớp:</label>
+                    <input type="number" id="studentCount" name="studentCount" required>
+                </div>
+                <div class="form-group">
+                    <label for="classTime">Thời gian học:</label>
+                    <input type="text" id="classTime" name="classTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="classLocation">Địa điểm:</label>
+                    <input type="text" id="classLocation" name="classLocation" required>
+                </div>
+                <button type="submit">Thêm/Cập nhật lớp học</button>
+            </form>
+            <table id="classTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên lớp</th>
+                        <th>Giáo viên</th>
+                        <th>Sĩ số lớp</th>
+                        <th>Thời gian học</th>
+                        <th>Địa điểm</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Mảng lưu trữ dữ liệu
+        let classData = [];
+
+        // Thêm hoặc cập nhật dữ liệu
+        function addOrUpdateData(formId, tableId, dataArray, storageKey) {
+            const form = document.getElementById(formId);
+            const table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+                const formObject = Object.fromEntries(formData.entries());
+
+                if (form.dataset.editing === 'true') {
+                    const editIndex = parseInt(form.dataset.editIndex);
+                    dataArray[editIndex] = formObject;
+                    delete form.dataset.editing;
+                    delete form.dataset.editIndex;
+                } else {
+                    dataArray.push(formObject);
+                }
+
+                form.reset();
+                localStorage.setItem(storageKey, JSON.stringify(dataArray));
+                updateTable(table, dataArray);
+            });
+        }
+
+        // Cập nhật bảng dữ liệu
+        function updateTable(table, dataArray) {
+            table.innerHTML = '';
+            dataArray.forEach((item, index) => {
+                const row = table.insertRow();
+                row.insertCell().textContent = index + 1; // Thêm ID tự tăng
+                Object.values(item).forEach((text, i) => {
+                    const cell = row.insertCell(i + 1);
+                    cell.textContent = text;
+                });
+
+                const actionCell = row.insertCell();
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Sửa';
+                editButton.addEventListener('click', () => editData(index, 'classForm', 'classTable', 'classData'));
+                actionCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Xóa';
+                deleteButton.addEventListener('click', () => deleteData(index, 'classTable', classData, 'classData'));
+                actionCell.appendChild(deleteButton);
+            });
+        }
+
+        // Chỉnh sửa dữ liệu
+        function editData(index, formId, tableId, storageKey) {
+            const dataArray = JSON.parse(localStorage.getItem(storageKey));
+            const item = dataArray[index];
+            const form = document.getElementById(formId);
+
+            Object.entries(item).forEach(([key, value]) => {
+                const input = form.elements.namedItem(key);
+                if (input) input.value = value;
+            });
+            form.dataset.editing = 'true';
+            form.dataset.editIndex = index.toString();
+        }
+
+        // Xóa dữ liệu
+        function deleteData(index, tableId, dataArray, storageKey) {
+            dataArray.splice(index, 1);
+            localStorage.setItem(storageKey, JSON.stringify(dataArray));
+            const table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+            updateTable(table, dataArray);
+        }
+
+        // Khởi tạo dữ liệu từ localStorage
+        function initializeData(tableId, dataArray, storageKey) {
+            const table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+            const storedData = localStorage.getItem(storageKey);
+            if (storedData) {
+                dataArray.push(...JSON.parse(storedData));
+                updateTable(table, dataArray);
+            }
+        }
+
+        // Thêm sự kiện cho điều hướng menu
+        document.querySelectorAll('.menu-items li').forEach(item => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.content > div').forEach(content => {
+                    content.style.display = 'none';
+                });
+                const targetId = item.getAttribute('data-target');
+                document.getElementById(targetId).style.display = 'block';
+            });
+        });
+
+        // Mở trang đầu tiên theo mặc định
+        document.querySelector('.menu-items li[data-target="classes"]').click();
+
+        // Khởi tạo dữ liệu cho tất cả các mục
+        initializeData('classTable', classData, 'classData');
+
+        // Áp dụng chức năng thêm hoặc cập nhật cho từng bảng
+        addOrUpdateData('classForm', 'classTable', classData, 'classData');
+
+        // Chức năng điều chỉnh menu
+        const menuToggle = document.getElementById('menuToggle');
+        const menuContainer = document.getElementById('menuContainer');
+        menuToggle.addEventListener('click', function () {
+            menuContainer.classList.toggle('collapsed');
+        });
+    </script>
+</body>
+
+</html>

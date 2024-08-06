@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Hệ thống Quản lý Trường học</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            display: flex;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 900px;
+            max-width: 100%;
+            margin: 20px;
+            height: auto;
+        }
+        .form {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+        .illustration {
+            flex: 1;
+            background-color: #f7f9fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            text-align: center;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+            border-color: #6200ee;
+            outline: none;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 12px 40px;
+            background-color: #6200ee;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(98, 0, 238, 0.3);
+        }
+        .button:hover {
+            background-color: #3700b3;
+            box-shadow: 0 6px 8px rgba(55, 0, 179, 0.4);
+            transform: translateY(-2px);
+        }
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(55, 0, 179, 0.4);
+        }
+        .links {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .links a {
+            color: #6200ee;
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        .links a:hover {
+            color: #3700b3;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .remember-me input {
+            margin-right: 8px;
+        }
+        .google-login {
+            margin-top: 20px;
+        }
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #757575;
+            transition: background-color 0.3s;
+        }
+        .google-btn:hover {
+            background-color: #f5f5f5;
+        }
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .illustration {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form" id="loginForm">
+            <h2>Đăng nhập</h2>
+            <form onsubmit="return login(event)">
+                <input type="email" placeholder="Email đăng nhập" required>
+                <input type="password" placeholder="Mật khẩu" required>
+                <div class="remember-me">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Ghi nhớ đăng nhập</label>
+                </div>
+                <div class="button-container">
+                    <button type="submit" class="button">Đăng nhập</button>
+                </div>
+            </form>
+            <div class="links">
+                <a href="#">Quên mật khẩu?</a>
+            </div>
+            <div class="google-login">
+                <div class="google-btn" onclick="loginWithGoogle()">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDE4IDE4Ij48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNMTcuNjQgOS4yMDVjMC0uNjM5LS4wNTctMS4yNTItLjE2NC0xLjg0MUg5djMuNDgxaDQuODQ0YTQuMTQgNC4xNCAwIDAgMS0xLjc5NiAyLjcxNnYyLjI1OWgyLjkwOGMxLjcwMi0xLjU2NyAyLjY4NC00Ljg3MiAyLjY4NC04LjYxNXoiLz48cGF0aCBmaWxsPSIjMzRBODUzIiBkPSJNOSAxOGMzLjI0IDAgNS45NTYtMS4wNzUgNy45NDUtMi45MTZsLTIuOTA4LTIuMjU5Yy0uODA2LjU0LTEuODM3Ljg2LTMuMDM3Ljg2LTIuMzQ0IDAtNC4zMjgtMS41ODQtNS4wMzYtMy43MTFIMi45NTd2Mi4zMzJBOC45OTcgOC45OTcgMCAwIDAgOSAxOHoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMy45NjQgMTAuNzFBNS40MSA1LjQxIDAgMCAxIDMuNjgyIDlhNS40MSA1LjQxIDAgMCAxIC4yODItMS43MUwyLjk1NyA0Ljk1OEE4Ljk5NyA4Ljk5NyAwIDAgMCAxLjk0NiA5YzAgMS40NTIuMzQ4IDIuODI3Ljk2NCAzLjA0MmwxLjA1NC0xLjMzMnoiLz48cGF0aCBmaWxsPSIjRUE0MzM1IiBkPSJNOSAzLjU4YzEuMzIxIDAgMi41MDguNDU0IDMuNDQgMS4zNDVsMi41ODItMi41OEM3LjQ2My44OTEgNS40MzYgMCA5IDAgNC4wMzYgMCAuMjY4IDMuNiAxLjk0NiA3LjYxOEw0LjAwNCA1Ljc0QzQuNjg5IDQuNDUgNi42NiAzLjU4IDkgMy41OHoiLz48L3N2Zz4=" alt="Google logo" class="google-icon"> Đăng nhập với Google
+                </div>
+            </div>
+        </div>
+        <div class="illustration">
+            <img src="https://nphdigital.com/wp-content/uploads/2024/07/website-nph-digital.png" alt="Illustration" style="max-width: 100%; height: auto;">
+        </div>
+    </div>
+    <script>
+        function login(event) {
+            event.preventDefault();
+            // Thực hiện xác thực đăng nhập ở đây
+            // Nếu đăng nhập thành công, chuyển hướng đến trang home
+            window.location.href = 'home.html';
+        }
+        function loginWithGoogle() {
+            // Thực hiện đăng nhập bằng Google ở đây
+            // Sau khi xác thực thành công, chuyển hướng đến trang home
+            window.location.href = 'home.html';
+        }
+    </script>
+</body>
+</html>
+
